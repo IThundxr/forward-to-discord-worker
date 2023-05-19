@@ -29,24 +29,43 @@ export default {
 			body: JSON.stringify({
 				embeds: [{
 					title: "DMARC Report",
-					description: `From: ${message.from} \nSubject: ${message.headers.get("subject")} \nContent: \`\`\`${parsedEmail.text}\`\`\``,
+					description: `**From**: ${message.from} \n**Subject**: ${message.headers.get("subject")} \n**Content**: \`\`\`${parsedEmail.text}\`\`\``,
 					color: 65496
 				}]
 			}),
 		});
+		// if (parsedEmail.attachments.length > 0) {
+		// 	parsedEmail.attachments.forEach(async att => {
+		// 		const form = new FormData();
+		// 		form.append("file1", att);
+		// 		await fetch(env.DISCORD_WEBHOOK_URL, {
+		// 			method: "POST",
+		// 			headers: {
+		// 				"Content-Type": "application/form-data",
+		// 			},
+		// 			body: form
+		// 		})
+		// 	});
+		// }
 
-		parsedEmail.attachments.forEach(async att => {
-			console.log(att)
-
+		if (parsedEmail.attachments.length > 0) {
 			const form = new FormData();
-			form.append("file1", att);
+
+			parsedEmail.attachments.forEach((att, index) => {
+				form.append("payload_json", JSON.stringify({
+					"content": "test"
+				}));
+				form.append(`file${index + 1}`, att,);
+			});
+			form.headers
+			form.append("payload_json", '{"content": "test"}');
 			await fetch(env.DISCORD_WEBHOOK_URL, {
 				method: "POST",
 				headers: {
-					"Content-Type": "application/form-data",
+					"Content-Type": "multipart/form-data",
 				},
-				body: form
-			})
-		});
-	},
+				body: form,
+			}).then(response => response.json()).then(response => console.log(response)).catch(err => console.error(err));
+		}
+	}
 };
