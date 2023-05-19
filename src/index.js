@@ -28,24 +28,25 @@ export default {
 			},
 			body: JSON.stringify({
 				embeds: [{
-						title: "DMARC Report",
-						description: `Got a DMARC report from ${message.from} \nsubject: ${message.headers.get("subject")} \ntext: ${parsedEmail.text}`,
-					}]
-				}),
+					title: "DMARC Report",
+					description: `From: ${message.from} \nSubject: ${message.headers.get("subject")} \nContent: \`\`\`${parsedEmail.text}\`\`\``,
+					color: 65496
+				}]
+			}),
 		});
-		console.log(parsedEmail.attachments)
+
 		parsedEmail.attachments.forEach(async att => {
 			console.log(att)
 
 			const form = new FormData();
-				form.append("file1", att);
+			form.append("file1", att);
 			await fetch(env.DISCORD_WEBHOOK_URL, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/form-data",
 				},
 				body: form
-			});
+			})
 		});
 	},
 };
