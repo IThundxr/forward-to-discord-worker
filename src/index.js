@@ -57,8 +57,7 @@ export default {
 				}));
 				form.append(`file${index + 1}`, att,);
 			});
-			form.headers
-			form.append("payload_json", '{"content": "test"}');
+
 			await fetch(env.DISCORD_WEBHOOK_URL, {
 				method: "POST",
 				headers: {
